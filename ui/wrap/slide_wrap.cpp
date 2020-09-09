@@ -38,7 +38,14 @@ SlideWrap<RpWidget>::SlideWrap(
 		parent,
 		std::move(child),
 		padding))
-, _duration(st::slideWrapDuration) {
+, _direction(SlideWrapDirection::Vertical)
+, _duration(st::slideWrapDuration){
+}
+
+SlideWrap<RpWidget> *SlideWrap<RpWidget>::setDirection(SlideWrapDirection direction)
+{
+	_direction = direction;
+	return this;
 }
 
 SlideWrap<RpWidget> *SlideWrap<RpWidget>::setDuration(int duration) {
@@ -92,20 +99,46 @@ SlideWrap<RpWidget> *SlideWrap<RpWidget>::toggleOn(
 
 void SlideWrap<RpWidget>::animationStep() {
 	auto newWidth = width();
-	if (auto weak = wrapped()) {
-		auto margins = getMargins();
-		weak->moveToLeft(margins.left(), margins.top());
-		newWidth = weak->width();
-	}
+	auto newHeight = height();
+
 	auto current = _animation.value(_toggled ? 1. : 0.);
-	auto newHeight = wrapped()
-		? (_animation.animating()
-		? anim::interpolate(0, wrapped()->heightNoMargins(), current)
-		: (_toggled ? wrapped()->height() : 0))
-		: 0;
+
+	switch (_direction) {
+		case SlideWrapDirection::Vertical:
+		{
+			if (auto weak = wrapped())
+			{
+				auto margins = getMargins();
+				weak->moveToLeft(margins.left(), margins.top());
+				newWidth = weak->width();
+			}
+
+			newHeight = wrapped()
+				? (_animation.animating()
+				   ? anim::interpolate(0, wrapped()->heightNoMargins(), current)
+				   : (_toggled ? wrapped()->height() : 0))
+				: 0;
+			break;
+		}
+		case SlideWrapDirection::Horizontal:
+		{
+			if (auto weak = wrapped()) {
+				auto margins = getMargins();
+				weak->moveToLeft(margins.left(), margins.top());
+				newWidth = _animation.animating()
+					? anim::interpolate(0, weak->width(), current)
+					: (_toggled ? weak->width() : 0);
+			}
+
+			newHeight = wrapped() ? wrapped()->height() : 0;
+			break;
+		}
+	}
+
 	if (newWidth != width() || newHeight != height()) {
 		resize(newWidth, newHeight);
 	}
+
 	auto shouldBeHidden = !_toggled && !_animation.animating();
 	if (shouldBeHidden != isHidden()) {
 		const auto guard = MakeWeak(this);

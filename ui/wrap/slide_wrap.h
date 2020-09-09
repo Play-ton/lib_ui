@@ -11,6 +11,11 @@
 
 namespace Ui {
 
+enum class SlideWrapDirection {
+	Vertical,
+	Horizontal
+};
+
 template <typename Widget = RpWidget>
 class SlideWrap;
 
@@ -30,6 +35,7 @@ public:
 		object_ptr<RpWidget> &&child,
 		const style::margins &padding);
 
+	SlideWrap *setDirection(SlideWrapDirection direction);
 	SlideWrap *setDuration(int duration);
 	SlideWrap *toggle(bool shown, anim::type animated);
 	SlideWrap *show(anim::type animated) {
@@ -62,6 +68,7 @@ private:
 
 	bool _toggled = true;
 	rpl::event_stream<bool> _toggledChanged;
+	SlideWrapDirection _direction;
 	Animations::Simple _animation;
 	int _duration = 0;
 
