@@ -1143,7 +1143,7 @@ const QRegularExpression &RegExpWordSplit() {
 	auto &&urls = ranges::make_subrange(
 		entities.begin(),
 		entities.end()
-	) | ranges::view::filter([](const EntityInText &entity) {
+	) | ranges::views::filter([](const EntityInText &entity) {
 		return entity.type() == EntityType::CustomUrl;
 	});
 	const auto &original = text.text;
@@ -2106,7 +2106,7 @@ int EntityInText::FirstMonospaceOffset(
 	auto &&monospace = ranges::make_subrange(
 		entities.begin(),
 		entities.end()
-	) | ranges::view::filter([](const EntityInText & entity) {
+	) | ranges::views::filter([](const EntityInText & entity) {
 		return (entity.type() == EntityType::Pre)
 			|| (entity.type() == EntityType::Code);
 	});
