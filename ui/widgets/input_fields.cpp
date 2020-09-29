@@ -2436,6 +2436,11 @@ void InputField::setTextWithTags(
 	_insertedTagsAreFromMime = false;
 	_realInsertPosition = 0;
 	_realCharsAdded = textWithTags.text.size();
+
+    _lastTextWithTags.text = textWithTags.text;
+    _lastTextWithTags.tags = textWithTags.tags;
+
+
 	const auto document = _inner->document();
 	auto cursor = QTextCursor(document->docHandle(), 0);
 	if (historyAction == HistoryAction::Clear) {
