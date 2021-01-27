@@ -10,32 +10,31 @@ namespace ph {
 namespace {
 
 int &PhraseCounter() {
-	static auto result = 0;
-	return result;
+  static auto result = 0;
+  return result;
 }
 
-} // namespace
+}  // namespace
 
 phrase::phrase(const QString &initial) : value(initial) {
-	if (auto &counter = PhraseCounter()) {
-		++counter;
-	}
+  if (auto &counter = PhraseCounter()) {
+    ++counter;
+  }
 }
 
 phrase::phrase(rpl::producer<QString> initial) : value(std::move(initial)) {
 }
 
-
 now_t start_phrase_count() {
-	PhraseCounter() = 1;
-	return now;
+  PhraseCounter() = 1;
+  return now;
 }
 
 now_t check_phrase_count(int count) {
-	Expects(PhraseCounter() == count + 1);
+  Expects(PhraseCounter() == count + 1);
 
-	PhraseCounter() = 0;
-	return now;
+  PhraseCounter() = 0;
+  return now;
 }
 
-} // namespace ph
+}  // namespace ph

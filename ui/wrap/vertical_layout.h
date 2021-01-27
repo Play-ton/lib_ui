@@ -12,76 +12,57 @@
 namespace Ui {
 
 class VerticalLayout : public RpWidget {
-public:
-	using RpWidget::RpWidget;
+ public:
+  using RpWidget::RpWidget;
 
-	[[nodiscard]] int count() const {
-		return _rows.size();
-	}
-	[[nodiscard]] not_null<RpWidget*> widgetAt(int index) const {
-		Expects(index >= 0 && index < count());
+  [[nodiscard]] int count() const {
+    return _rows.size();
+  }
+  [[nodiscard]] not_null<RpWidget *> widgetAt(int index) const {
+    Expects(index >= 0 && index < count());
 
-		return _rows[index].widget.data();
-	}
+    return _rows[index].widget.data();
+  }
+  [[nodiscard]] style::margins marginsAt(int index) const {
+    Expects(index >= 0 && index < count());
+    return _rows[index].margin;
+  }
 
-	template <
-		typename Widget,
-		typename = std::enable_if_t<
-			std::is_base_of_v<RpWidget, Widget>>>
-	Widget *insert(
-			int atPosition,
-			object_ptr<Widget> &&child,
-			const style::margins &margin = style::margins()) {
-		return static_cast<Widget*>(insertChild(
-			atPosition,
-			std::move(child),
-			margin));
-	}
+  template <typename Widget, typename = std::enable_if_t<std::is_base_of_v<RpWidget, Widget>>>
+  Widget *insert(int atPosition, object_ptr<Widget> &&child, const style::margins &margin = style::margins()) {
+    return static_cast<Widget *>(insertChild(atPosition, std::move(child), margin));
+  }
 
-	template <
-		typename Widget,
-		typename = std::enable_if_t<
-			std::is_base_of_v<RpWidget, Widget>>>
-	Widget *add(
-			object_ptr<Widget> &&child,
-			const style::margins &margin = style::margins()) {
-		return insert(count(), std::move(child), margin);
-	}
+  template <typename Widget, typename = std::enable_if_t<std::is_base_of_v<RpWidget, Widget>>>
+  Widget *add(object_ptr<Widget> &&child, const style::margins &margin = style::margins()) {
+    return insert(count(), std::move(child), margin);
+  }
 
-	QMargins getMargins() const override;
-	int naturalWidth() const override;
+  void removeChild(RpWidget *child);
 
-	void setVerticalShift(int index, int shift);
-	void reorderRows(int oldIndex, int newIndex);
+  QMargins getMargins() const override;
+  int naturalWidth() const override;
 
-protected:
-	int resizeGetHeight(int newWidth) override;
-	void visibleTopBottomUpdated(
-		int visibleTop,
-		int visibleBottom) override;
+  void setVerticalShift(int index, int shift);
+  void reorderRows(int oldIndex, int newIndex);
 
-private:
-	RpWidget *insertChild(
-		int addPosition,
-		object_ptr<RpWidget> child,
-		const style::margins &margin);
-	void childHeightUpdated(RpWidget *child);
-	void removeChild(RpWidget *child);
-	void updateChildGeometry(
-		const style::margins &margins,
-		RpWidget *child,
-		const style::margins &margin,
-		int width,
-		int top) const;
+ protected:
+  int resizeGetHeight(int newWidth) override;
+  void visibleTopBottomUpdated(int visibleTop, int visibleBottom) override;
 
-	struct Row {
-		object_ptr<RpWidget> widget;
-		style::margins margin;
-		int verticalShift = 0;
-	};
-	std::vector<Row> _rows;
-	bool _inResize = false;
+ private:
+  RpWidget *insertChild(int addPosition, object_ptr<RpWidget> child, const style::margins &margin);
+  void childHeightUpdated(RpWidget *child);
+  void updateChildGeometry(const style::margins &margins, RpWidget *child, const style::margins &margin, int width,
+                           int top) const;
 
+  struct Row {
+    object_ptr<RpWidget> widget;
+    style::margins margin;
+    int verticalShift = 0;
+  };
+  std::vector<Row> _rows;
+  bool _inResize = false;
 };
 
-} // namespace Ui
+}  // namespace Ui
