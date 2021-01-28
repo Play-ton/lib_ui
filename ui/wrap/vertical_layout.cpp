@@ -93,13 +93,13 @@ RpWidget *VerticalLayout::insertChild(int atPosition, object_ptr<RpWidget> child
   if (const auto weak = AttachParentChild(this, child)) {
     _rows.insert(begin(_rows) + atPosition, {std::move(child), margin});
     weak->heightValue()  //
-        | rpl::start_with_next_done(
+        | rpl::start_with_next(
               [=] {
                 if (!_inResize) {
                   childHeightUpdated(weak);
                 }
               },
-              [=] { removeChild(weak); }, lifetime());
+              weak->lifetime());
     return weak;
   }
   return nullptr;
@@ -146,7 +146,7 @@ void VerticalLayout::removeChild(RpWidget *child) {
     widget->moveToLeft(margins.left() + margin.left(), margins.top() + top + margin.top());
     top += margin.top() + widget->heightNoMargins() + margin.bottom();
   }
-  it->widget = nullptr;
+  it->widget.destroy();
   _rows.erase(it);
 
   resize(width(), margins.top() + top + margins.bottom());
