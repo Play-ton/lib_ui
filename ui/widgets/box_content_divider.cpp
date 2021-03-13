@@ -13,30 +13,40 @@
 
 namespace Ui {
 
-BoxContentDivider::BoxContentDivider(QWidget *parent)
-: BoxContentDivider(parent, st::boxDividerHeight) {
+BoxContentDivider::BoxContentDivider(QWidget *parent) : BoxContentDivider(parent, st::boxDividerHeight) {
 }
 
 BoxContentDivider::BoxContentDivider(QWidget *parent, int height)
-: RpWidget(parent) {
-	resize(width(), height);
+    : RpWidget(parent), _originalHeight(height), _offset(Offset::Both) {
+  resize(width(), height);
+}
+
+void BoxContentDivider::setOffset(BoxContentDivider::Offset offset) {
+  int height = _originalHeight;
+  if ((offset & Offset::Top) == 0) {
+    height -= st::boxDividerTop.height();
+  }
+  if ((offset & Offset::Bottom) == 0) {
+    height -= st::boxDividerBottom.height();
+  }
+  _offset = offset;
+  resize(width(), height);
 }
 
 void BoxContentDivider::paintEvent(QPaintEvent *e) {
-	QPainter p(this);
-	p.fillRect(e->rect(), st::boxDividerBg);
-	const auto dividerFillTop = QRect(
-		0,
-		0,
-		width(),
-		st::boxDividerTop.height());
-	st::boxDividerTop.fill(p, dividerFillTop);
-	const auto dividerFillBottom = myrtlrect(
-		0,
-		height() - st::boxDividerBottom.height(),
-		width(),
-		st::boxDividerBottom.height());
-	st::boxDividerBottom.fill(p, dividerFillBottom);
+  QPainter p(this);
+  p.fillRect(e->rect(), st::boxDividerBg);
+
+  if (_offset & Offset::Top) {
+    const auto dividerFillTop = QRect(0, 0, width(), st::boxDividerTop.height());
+    st::boxDividerTop.fill(p, dividerFillTop);
+  }
+
+  if (_offset & Offset::Bottom) {
+    const auto dividerFillBottom =
+        myrtlrect(0, height() - st::boxDividerBottom.height(), width(), st::boxDividerBottom.height());
+    st::boxDividerBottom.fill(p, dividerFillBottom);
+  }
 }
 
-} // namespace Ui
+}  // namespace Ui

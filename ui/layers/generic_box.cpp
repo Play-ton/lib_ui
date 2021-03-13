@@ -14,19 +14,19 @@
 namespace Ui {
 
 void GenericBox::prepare() {
-	_init(this);
+  _init(this);
 
-	auto wrap = object_ptr<Ui::OverrideMargins>(this, std::move(_content));
-	setDimensionsToContent(_width ? _width : st::boxWidth, wrap.data());
-	setInnerWidget(std::move(wrap));
+  auto wrap = object_ptr<Ui::OverrideMargins>(this, std::move(_content));
+  setDimensionsToContent(_width ? _width : st::boxWidth, wrap.data());
+  setInnerWidget(std::move(wrap));
 }
 
 void GenericBox::addSkip(int height) {
-	addRow(object_ptr<Ui::FixedHeightWidget>(this, height));
+  addRow(object_ptr<Ui::FixedHeightWidget>(this, height));
 }
 
 not_null<Ui::VerticalLayout*> GenericBox::verticalLayout() {
-	return _content.data();
+  return _content.data();
 }
 
-} // namespace Ui
+}  // namespace Ui

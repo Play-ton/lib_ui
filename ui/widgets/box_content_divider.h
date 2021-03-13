@@ -11,13 +11,23 @@
 namespace Ui {
 
 class BoxContentDivider : public Ui::RpWidget {
-public:
-	BoxContentDivider(QWidget *parent);
-	BoxContentDivider(QWidget *parent, int height);
+ public:
+  enum Offset {
+    Top = 0b01,
+    Bottom = 0b10,
+    Both = Top | Bottom,
+  };
 
-protected:
-	void paintEvent(QPaintEvent *e) override;
+  BoxContentDivider(QWidget *parent);
+  BoxContentDivider(QWidget *parent, int height);
 
+  void setOffset(Offset offset);
+
+ protected:
+  void paintEvent(QPaintEvent *e) override;
+
+  int _originalHeight;
+  Offset _offset;
 };
 
-} // namespace Ui
+}  // namespace Ui

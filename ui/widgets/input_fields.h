@@ -175,6 +175,7 @@ class InputField : public RpWidget {
 
   void showError();
   void showErrorNoFocus();
+  void setErrorShown(bool error);
 
   void setMaxLength(int maxLength);
   void setMinHeight(int minHeight);
@@ -351,7 +352,6 @@ class InputField : public RpWidget {
 
   bool heightAutoupdated();
   void checkContentHeight();
-  void setErrorShown(bool error);
 
   void focusInEventInner(QFocusEvent *e);
   void focusOutEventInner(QFocusEvent *e);
